@@ -9,6 +9,8 @@ from networksecurity.utils.main_utils.utils import save_object,load_object,load_
 from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
 from networksecurity.utils.ml_utils.model.estimator import NetworkModel
 
+import dagshub
+dagshub.init(repo_owner='mohitthekeeda456', repo_name='networksecurity', mlflow=True)
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
@@ -103,9 +105,14 @@ class ModelTrainer:
         os.makedirs(model_dir_path,exist_ok=True)
         Network_Model=NetworkModel(preprocessor=Preprocessor,model=best_model)
         save_object(file_path=self.model_trainer_config.trained_model_file_path,obj=Network_Model)
+        
+        save_object("final_model/model.pkl",best_model)
+        
+        
         model_trainer_artifact=ModelTrainerArtifact(trained_model_file_path=self.model_trainer_config.trained_model_file_path,
                                                   train_metric_artifact=classification_train_metric,
                                                   test_metric_artifact=classification_test_metric,)
+        
         logging.info(f"Model Trainer Artifact: {model_trainer_artifact}")
         return model_trainer_artifact
 
